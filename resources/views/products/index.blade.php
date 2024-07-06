@@ -2,12 +2,45 @@
 
 @section('content')
     <h2>Daftar Produk</h2>
+    <form action="{{ route('products.index') }}" method="GET">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Cari produk..." name="query" value="{{ request('query') }}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </div>
+    </form>
     <table class="table">
         <thead>
             <tr>
-                <th>Nama</th>
-                <th>Harga</th>
-                <th>Stok</th>
+                <th>
+                    Nama
+                    <a href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'asc', 'order' => 'name'])) }}">
+                        <i class="fas fa-arrow-up"></i>
+                    </a>
+                    <a href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'desc', 'order' => 'name'])) }}">
+                        <i class="fas fa-arrow-down"></i>
+                    </a>
+                </th>
+                <th>
+                    Harga
+                    <a href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'asc', 'order' => 'price'])) }}">
+                        <i class="fas fa-arrow-up"></i>
+                    </a>
+                    <a href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'desc', 'order' => 'price'])) }}">
+                        <i class="fas fa-arrow-down"></i>
+                    </a>
+                </th>
+                <th>
+                    Stok
+                    <a href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'asc', 'order' => 'stock'])) }}">
+                        <i class="fas fa-arrow-up"></i>
+                    </a>
+                    <a href="{{ route('products.index', array_merge(request()->query(), ['sort' => 'desc', 'order' => 'stock'])) }}">
+                        <i class="fas fa-arrow-down"></i>
+                    </a>
+                </th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -30,5 +63,7 @@
             @endforeach
         </tbody>
     </table>
+
+    {{ $products->links() }}
     <a href="{{ route('products.create') }}" class="btn btn-success">Tambah Produk Baru</a>
 @endsection

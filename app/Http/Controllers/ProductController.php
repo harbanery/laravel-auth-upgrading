@@ -7,12 +7,35 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all(); // Mengambil semua produk dari tabel 'products'
+        $query = $request->input('query');
+        $order = $request->input('order', "name");
+        $sort = $request->input('sort',"asc");
+
+        $products = Product::when($query, function ($queryBuilder) use ($query, $order) {
+                            return $queryBuilder->where($order, 'like', '%'.$query.'%');
+                        })
+                        ->orderBy($order, $sort)
+                        ->paginate(5)
+                        ->appends($request->query());
+
+        return view('products.index', compact('products'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query'); // Mendapatkan kata kunci pencarian dari input form
+
+        $products = Product::where('name', 'like', '%'.$query.'%')->paginate(5); // Menampilkan 10 produk per halaman
+
         return view('products.index', compact('products'));
     }
 
